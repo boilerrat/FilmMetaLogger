@@ -39,7 +39,9 @@ final class FrameStore: ObservableObject {
         rollId: String,
         frameNumber: Int,
         timestamp: Date,
-        location: CLLocation?
+        location: CLLocation?,
+        voiceNoteRaw: String?,
+        voiceNoteParsed: String?
     ) {
         guard let database else { return }
         let frame = Frame(
@@ -47,7 +49,9 @@ final class FrameStore: ObservableObject {
             frameNumber: frameNumber,
             timestamp: timestamp,
             latitude: location?.coordinate.latitude,
-            longitude: location?.coordinate.longitude
+            longitude: location?.coordinate.longitude,
+            voiceNoteRaw: voiceNoteRaw,
+            voiceNoteParsed: voiceNoteParsed
         )
         do {
             try database.insertFrame(frame)

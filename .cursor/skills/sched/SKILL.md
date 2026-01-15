@@ -28,9 +28,9 @@ Export usable metadata.
 - [x] Timestamp and GPS capture
 
 ## Day 4
-- Voice recording
-- Speech to text
-- Save raw transcript
+- [x] Voice recording
+- [x] Speech to text
+- [x] Save raw transcript
 
 ## Day 5
 - Export logic

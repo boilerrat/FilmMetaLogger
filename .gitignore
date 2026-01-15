@@ -1,0 +1,17 @@
+.DS_Store
+*.log
+
+# Xcode / Swift
+DerivedData/
+*.xcuserdata
+*.xcuserstate
+*.xcworkspace
+.build/
+
+# iOS artifacts
+*.ipa
+
+# SQLite
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

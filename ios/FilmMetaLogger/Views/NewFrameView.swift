@@ -8,8 +8,12 @@ struct NewFrameView: View {
     let roll: Roll
 
     @StateObject private var locationProvider = LocationProvider()
+    @StateObject private var audioRecorder = AudioRecorder()
+    @StateObject private var speechTranscriber = SpeechTranscriber()
     @State private var frameNumber: Int = 1
     @State private var timestamp = Date()
+    @State private var transcriptRaw = ""
+    @State private var isTranscribing = false
 
     var body: some View {
         NavigationStack {
@@ -41,6 +45,25 @@ struct NewFrameView: View {
                         locationProvider.requestLocation()
                     }
                 }
+
+                Section("Voice Note") {
+                    if audioRecorder.isRecording {
+                        Text("Recording...")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    } else if isTranscribing {
+                        Text("Transcribing...")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    TextEditor(text: $transcriptRaw)
+                        .frame(minHeight: 120)
+
+                    Button(audioRecorder.isRecording ? "Stop Recording" : "Record Voice Note") {
+                        toggleRecording()
+                    }
+                }
             }
             .navigationTitle("New Frame")
             .toolbar {
@@ -60,6 +83,8 @@ struct NewFrameView: View {
                 timestamp = Date()
                 locationProvider.requestAuthorization()
                 locationProvider.requestLocation()
+                audioRecorder.requestPermission { _ in }
+                speechTranscriber.requestAuthorization { _ in }
             }
         }
     }
@@ -78,13 +103,36 @@ struct NewFrameView: View {
     }
 
     private func saveFrame() {
+        let trimmedTranscript = transcriptRaw.trimmingCharacters(in: .whitespacesAndNewlines)
         frameStore.createFrame(
             rollId: roll.id,
             frameNumber: frameNumber,
             timestamp: timestamp,
-            location: locationProvider.lastLocation
+            location: locationProvider.lastLocation,
+            voiceNoteRaw: trimmedTranscript.isEmpty ? nil : trimmedTranscript,
+            voiceNoteParsed: nil
         )
         dismiss()
+    }
+
+    private func toggleRecording() {
+        if audioRecorder.isRecording {
+            audioRecorder.stopRecording()
+            transcribeRecording()
+        } else {
+            audioRecorder.startRecording()
+        }
+    }
+
+    private func transcribeRecording() {
+        guard let url = audioRecorder.recordingURL else { return }
+        isTranscribing = true
+        speechTranscriber.transcribeAudio(at: url) { transcript in
+            isTranscribing = false
+            if let transcript {
+                transcriptRaw = transcript
+            }
+        }
     }
 
     private static let displayFormatter: DateFormatter = {

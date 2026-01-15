@@ -32,6 +32,12 @@ struct FrameListView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
+                    if let transcript = frame.voiceNoteRaw, !transcript.isEmpty {
+                        Text(transcript)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
                 }
                 .padding(.vertical, 4)
             }
