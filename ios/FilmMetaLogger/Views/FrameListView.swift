@@ -5,6 +5,10 @@ struct FrameListView: View {
     let roll: Roll
 
     @State private var showingNewFrame = false
+    @State private var showingShare = false
+    @State private var shareURL: URL?
+    @State private var errorMessage: String?
+    private let exporter = RollExporter()
 
     private static let displayFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -47,13 +51,43 @@ struct FrameListView: View {
             Button("New Frame") {
                 showingNewFrame = true
             }
+            Menu("Export") {
+                Button("Export JSON") {
+                    export(format: .json)
+                }
+                Button("Export CSV") {
+                    export(format: .csv)
+                }
+            }
         }
         .sheet(isPresented: $showingNewFrame) {
             NewFrameView(roll: roll)
                 .environmentObject(frameStore)
         }
+        .sheet(isPresented: $showingShare) {
+            if let shareURL {
+                ShareSheet(activityItems: [shareURL])
+            }
+        }
+        .alert("Export Failed", isPresented: Binding(
+            get: { errorMessage != nil },
+            set: { _ in errorMessage = nil }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage ?? "")
+        }
         .onAppear {
             frameStore.loadFrames(for: roll.id)
+        }
+    }
+
+    private func export(format: RollExportFormat) {
+        do {
+            shareURL = try exporter.exportRoll(rollId: roll.id, format: format)
+            showingShare = true
+        } catch {
+            errorMessage = "\(error)"
         }
     }
 }

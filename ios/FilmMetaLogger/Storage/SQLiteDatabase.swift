@@ -173,6 +173,45 @@ final class SQLiteDatabase {
         return rolls
     }
 
+    func fetchRoll(rollId: String) throws -> Roll? {
+        let sql = """
+        SELECT roll_id, film_stock, iso, camera, lens, notes, start_time, end_time
+        FROM rolls
+        WHERE roll_id = ?;
+        """
+        let statement = try prepare(sql: sql)
+        defer { sqlite3_finalize(statement) }
+
+        bindText(rollId, to: statement, index: 1)
+
+        guard sqlite3_step(statement) == SQLITE_ROW else {
+            return nil
+        }
+
+        let rollId = columnText(statement, index: 0) ?? ""
+        let filmStock = columnText(statement, index: 1) ?? ""
+        let iso = Int(sqlite3_column_int(statement, 2))
+        let camera = columnText(statement, index: 3) ?? ""
+        let lens = columnText(statement, index: 4) ?? ""
+        let notes = columnText(statement, index: 5)
+        let startString = columnText(statement, index: 6) ?? ""
+        let endString = columnText(statement, index: 7)
+
+        let startTime = Self.dateFormatter.date(from: startString) ?? Date()
+        let endTime = endString.flatMap { Self.dateFormatter.date(from: $0) }
+
+        return Roll(
+            id: rollId,
+            filmStock: filmStock,
+            iso: iso,
+            camera: camera,
+            lens: lens,
+            notes: notes,
+            startTime: startTime,
+            endTime: endTime
+        )
+    }
+
     func insertFrame(_ frame: Frame) throws {
         let sql = """
         INSERT INTO frames (

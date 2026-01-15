@@ -33,9 +33,9 @@ Export usable metadata.
 - [x] Save raw transcript
 
 ## Day 5
-- Export logic
-- JSON and CSV per roll
-- Files app integration
+- [x] Export logic
+- [x] JSON and CSV per roll
+- [x] Files app integration
 
 ## Day 6
 - Desktop validation
