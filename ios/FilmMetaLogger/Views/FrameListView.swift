@@ -31,8 +31,36 @@ struct FrameListView: View {
                     Text(Self.displayFormatter.string(from: frame.timestamp))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                    if let shutter = frame.shutter, let aperture = frame.aperture {
+                        Text("\(shutter) • \(aperture)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else if let shutter = frame.shutter {
+                        Text(shutter)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else if let aperture = frame.aperture {
+                        Text(aperture)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    if let focalLength = frame.focalLength {
+                        Text("Focal length \(focalLength)mm")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    if let exposureComp = frame.exposureComp, !exposureComp.isEmpty {
+                        Text("Exposure comp \(exposureComp)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                     if let latitude = frame.latitude, let longitude = frame.longitude {
                         Text("Location \(latitude), \(longitude)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    if !frame.keywords.isEmpty {
+                        Text("Keywords: \(frame.keywords.joined(separator: ", "))")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

@@ -40,6 +40,11 @@ final class FrameStore: ObservableObject {
         frameNumber: Int,
         timestamp: Date,
         location: CLLocation?,
+        shutter: String?,
+        aperture: String?,
+        focalLength: Int?,
+        exposureComp: String?,
+        keywords: [String],
         voiceNoteRaw: String?,
         voiceNoteParsed: String?
     ) {
@@ -47,11 +52,16 @@ final class FrameStore: ObservableObject {
         let frame = Frame(
             rollId: rollId,
             frameNumber: frameNumber,
+            shutter: shutter,
+            aperture: aperture,
+            focalLength: focalLength,
+            exposureComp: exposureComp,
             timestamp: timestamp,
             latitude: location?.coordinate.latitude,
             longitude: location?.coordinate.longitude,
             voiceNoteRaw: voiceNoteRaw,
-            voiceNoteParsed: voiceNoteParsed
+            voiceNoteParsed: voiceNoteParsed,
+            keywords: keywords
         )
         do {
             try database.insertFrame(frame)

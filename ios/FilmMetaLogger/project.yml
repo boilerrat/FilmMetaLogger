@@ -1,0 +1,21 @@
+name: FilmMetaLogger
+options:
+  bundleIdPrefix: com.filmmetalogger
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  FilmMetaLogger:
+    type: application
+    platform: iOS
+    sources:
+      - path: .
+        excludes:
+          - project.yml
+    info:
+      path: Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.filmmetalogger.app
+        SWIFT_VERSION: 5.0
+    scheme:
+      testTargets: []

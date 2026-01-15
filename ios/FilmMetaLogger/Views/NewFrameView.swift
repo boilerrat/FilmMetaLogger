@@ -12,6 +12,11 @@ struct NewFrameView: View {
     @StateObject private var speechTranscriber = SpeechTranscriber()
     @State private var frameNumber: Int = 1
     @State private var timestamp = Date()
+    @State private var shutter = ""
+    @State private var aperture = ""
+    @State private var focalLengthText = ""
+    @State private var exposureComp = ""
+    @State private var keywordsText = ""
     @State private var transcriptRaw = ""
     @State private var isTranscribing = false
 
@@ -30,6 +35,18 @@ struct NewFrameView: View {
                     Button("Use Current Time") {
                         timestamp = Date()
                     }
+                }
+
+                Section("Exposure") {
+                    TextField("Shutter (e.g. 1/125)", text: $shutter)
+                    TextField("Aperture (e.g. f/2.8)", text: $aperture)
+                    TextField("Focal length (mm)", text: $focalLengthText)
+                        .keyboardType(.numberPad)
+                    TextField("Exposure comp (e.g. +1)", text: $exposureComp)
+                }
+
+                Section("Keywords") {
+                    TextField("Comma-separated keywords", text: $keywordsText)
                 }
 
                 Section("Location") {
@@ -104,11 +121,24 @@ struct NewFrameView: View {
 
     private func saveFrame() {
         let trimmedTranscript = transcriptRaw.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedShutter = shutter.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedAperture = aperture.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedExposureComp = exposureComp.trimmingCharacters(in: .whitespacesAndNewlines)
+        let focalLengthValue = Int(focalLengthText.trimmingCharacters(in: .whitespacesAndNewlines))
+        let keywords = keywordsText
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
         frameStore.createFrame(
             rollId: roll.id,
             frameNumber: frameNumber,
             timestamp: timestamp,
             location: locationProvider.lastLocation,
+            shutter: trimmedShutter.isEmpty ? nil : trimmedShutter,
+            aperture: trimmedAperture.isEmpty ? nil : trimmedAperture,
+            focalLength: focalLengthValue,
+            exposureComp: trimmedExposureComp.isEmpty ? nil : trimmedExposureComp,
+            keywords: keywords,
             voiceNoteRaw: trimmedTranscript.isEmpty ? nil : trimmedTranscript,
             voiceNoteParsed: nil
         )

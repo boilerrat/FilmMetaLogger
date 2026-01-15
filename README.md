@@ -16,6 +16,18 @@ Notes:
 - SQLite database stored in the app Documents directory.
 - Audio is recorded to Documents; transcript stored on the frame.
 
+## Build (iOS)
+This repo uses XcodeGen to generate the Xcode project.
+
+```bash
+brew install xcodegen
+cd ios/FilmMetaLogger
+xcodegen
+open FilmMetaLogger.xcodeproj
+```
+
+Info.plist permissions are defined in `ios/FilmMetaLogger/Info.plist`.
+
 ## Desktop Validation
 See `desktop/README.md` for the exiftool script and Lightroom checks.
 

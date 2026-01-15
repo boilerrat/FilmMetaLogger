@@ -47,6 +47,31 @@ Export usable metadata.
 - [x] UX cleanup
 - [x] Write README and usage notes
 
+## Day 8
+- Scaffold Xcode project
+- Add Info.plist permissions
+- Wire app target build
+
+## Day 9
+- Frame detail inputs (shutter, aperture, focal length, exposure comp)
+- Keywords entry
+- Display frame details in list
+
+## Day 10
+- Export polish (naming, overwrite handling)
+- In-app export status feedback
+- Document export path conventions
+
+## Day 11
+- Desktop workflow refinements
+- Validate Lightroom mappings with real roll
+- Update docs with screenshots or samples
+
+## Day 12
+- UX pass (empty states, button labels)
+- Error handling audit
+- Final bug fixes
+
 ## Sprint Output
 - iOS app build
 - Sample roll export
