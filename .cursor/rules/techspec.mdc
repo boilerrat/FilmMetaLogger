@@ -1,0 +1,182 @@
+---
+alwaysApply: true
+---
+# Film Metadata Log App
+Tech Specification
+
+## Purpose
+Capture frame-level film shooting data via voice on iPhone.
+Attach metadata to lab-scanned images later.
+Integrate cleanly with Lightroom and Photoshop.
+
+## Target Users
+- Film photographers
+- Lab-scanned workflows
+- Lightroom and Photoshop users
+
+## Platforms
+- iOS primary
+- Desktop secondary
+
+## Core Concepts
+- Roll
+- Frame
+- Export
+- Desktop metadata injection
+
+## Data Model
+
+### Roll
+- roll_id string
+- film_stock string
+- iso integer
+- camera string
+- lens string
+- notes string
+- start_time datetime
+- end_time datetime
+
+### Frame
+- roll_id string
+- frame_number integer
+- shutter string
+- aperture string
+- focal_length integer
+- exposure_comp string
+- timestamp datetime
+- latitude float
+- longitude float
+- weather_summary string
+- temperature_c float
+- voice_note_raw string
+- voice_note_parsed string
+- keywords array of strings
+
+### SQLite Schema
+All timestamps are stored as ISO-8601 strings in local time.
+
+```sql
+CREATE TABLE rolls (
+  roll_id TEXT PRIMARY KEY,
+  film_stock TEXT NOT NULL,
+  iso INTEGER NOT NULL,
+  camera TEXT NOT NULL,
+  lens TEXT NOT NULL,
+  notes TEXT,
+  start_time TEXT NOT NULL,
+  end_time TEXT
+);
+
+CREATE TABLE frames (
+  roll_id TEXT NOT NULL,
+  frame_number INTEGER NOT NULL,
+  shutter TEXT,
+  aperture TEXT,
+  focal_length INTEGER,
+  exposure_comp TEXT,
+  timestamp TEXT NOT NULL,
+  latitude REAL,
+  longitude REAL,
+  weather_summary TEXT,
+  temperature_c REAL,
+  voice_note_raw TEXT,
+  voice_note_parsed TEXT,
+  keywords TEXT,
+  PRIMARY KEY (roll_id, frame_number),
+  FOREIGN KEY (roll_id) REFERENCES rolls(roll_id)
+);
+```
+
+## Voice Input
+- Single record button
+- Save raw audio
+- Transcribe locally where supported
+- Store full transcript
+- Optional token parsing for shutter and aperture
+
+## iOS App Architecture
+- Frontend: SwiftUI
+- Storage: SQLite local database
+- Permissions:
+  - Microphone
+  - Location
+- Offline first
+
+## Export
+- Per roll export
+- Formats:
+  - JSON
+  - CSV
+- Fields aligned to Lightroom IPTC and XMP
+
+## Export Field Mapping
+### JSON
+- `roll`: all roll fields
+- `frames`: list of frames with all frame fields
+
+### CSV
+Single row per frame with roll fields repeated.
+Columns:
+- roll_id
+- film_stock
+- iso
+- camera
+- lens
+- notes
+- start_time
+- end_time
+- frame_number
+- shutter
+- aperture
+- focal_length
+- exposure_comp
+- timestamp
+- latitude
+- longitude
+- weather_summary
+- temperature_c
+- voice_note_raw
+- voice_note_parsed
+- keywords (comma-separated)
+
+### Lightroom Metadata
+IPTC:
+- Caption: `voice_note_parsed` if present, else `voice_note_raw`
+- Keywords: `keywords` (comma-separated)
+- Location: `"latitude,longitude"` when both are present
+
+XMP:
+- FilmShutterSpeed: `shutter`
+- FilmAperture: `aperture`
+- FilmISO: `iso`
+- FilmStock: `film_stock`
+- Camera: `camera`
+- Lens: `lens`
+
+## Desktop Workflow
+1. Receive lab scans
+2. Copy to working folder
+3. Rename in sequence
+4. Apply metadata via sidecars
+
+## Metadata Targets
+- IPTC:
+  - Caption
+  - Keywords
+  - Location
+- XMP:
+  - FilmShutterSpeed
+  - FilmAperture
+  - FilmISO
+  - FilmStock
+  - Camera
+  - Lens
+
+## Tools
+- exiftool for metadata writing
+- Lightroom Classic for verification
+
+## Non Goals
+- No automatic scan matching
+- No cloud dependency
+- No social features
