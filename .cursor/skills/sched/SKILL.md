@@ -18,14 +18,14 @@ Export usable metadata.
 - [x] Decide SwiftUI or React Native (SwiftUI)
 
 ## Day 2
-- Roll screen UI
-- Create and end roll
-- Persist roll data locally
+- [x] Roll screen UI
+- [x] Create and end roll
+- [x] Persist roll data locally
 
 ## Day 3
-- Frame logging screen
-- Auto increment frame number
-- Timestamp and GPS capture
+- [x] Frame logging screen
+- [x] Auto increment frame number
+- [x] Timestamp and GPS capture
 
 ## Day 4
 - Voice recording
