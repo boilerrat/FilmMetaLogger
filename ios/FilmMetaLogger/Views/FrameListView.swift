@@ -80,6 +80,11 @@ struct FrameListView: View {
         .onAppear {
             frameStore.loadFrames(for: roll.id)
         }
+        .onChange(of: frameStore.errorMessage) { _, newValue in
+            if let newValue {
+                errorMessage = newValue
+            }
+        }
     }
 
     private func export(format: RollExportFormat) {

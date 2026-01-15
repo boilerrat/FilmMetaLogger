@@ -1,0 +1,22 @@
+%Image::ExifTool::UserDefined = (
+    'Image::ExifTool::XMP::Main' => {
+        filmmeta => {
+            SubDirectory => {
+                TagTable => 'Image::ExifTool::UserDefined::FilmMeta',
+            },
+        },
+    },
+);
+
+%Image::ExifTool::UserDefined::FilmMeta = (
+    GROUPS => { 0 => 'XMP', 1 => 'XMP-filmmeta', 2 => 'Image' },
+    NAMESPACE => { 'filmmeta' => 'http://filmmeta.local/ns/1.0/' },
+    FilmShutterSpeed => { Writable => 'string' },
+    FilmAperture => { Writable => 'string' },
+    FilmISO => { Writable => 'string' },
+    FilmStock => { Writable => 'string' },
+    Camera => { Writable => 'string' },
+    Lens => { Writable => 'string' },
+);
+
+1;

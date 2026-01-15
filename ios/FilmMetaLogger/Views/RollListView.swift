@@ -3,6 +3,7 @@ import SwiftUI
 struct RollListView: View {
     @EnvironmentObject private var rollStore: RollStore
     @State private var showingNewRoll = false
+    @State private var errorMessage: String?
 
     private static let displayFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -67,6 +68,19 @@ struct RollListView: View {
             }
             .onAppear {
                 rollStore.loadRolls()
+            }
+            .onChange(of: rollStore.errorMessage) { _, newValue in
+                if let newValue {
+                    errorMessage = newValue
+                }
+            }
+            .alert("Roll Error", isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { _ in errorMessage = nil }
+            )) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage ?? "")
             }
         }
     }

@@ -38,14 +38,14 @@ Export usable metadata.
 - [x] Files app integration
 
 ## Day 6
-- Desktop validation
-- Test exiftool metadata injection
-- Verify Lightroom reads fields
+- [x] Desktop validation
+- [x] Test exiftool metadata injection
+- [x] Verify Lightroom reads fields
 
 ## Day 7
-- Bug fixes
-- UX cleanup
-- Write README and usage notes
+- [x] Bug fixes
+- [x] UX cleanup
+- [x] Write README and usage notes
 
 ## Sprint Output
 - iOS app build
