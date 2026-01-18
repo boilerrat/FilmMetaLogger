@@ -8,6 +8,7 @@ struct FrameListView: View {
     @State private var showingShare = false
     @State private var shareURL: URL?
     @State private var errorMessage: String?
+    @State private var successMessage: String?
     private let exporter = RollExporter()
 
     private static let displayFormatter: DateFormatter = {
@@ -21,8 +22,18 @@ struct FrameListView: View {
     var body: some View {
         List {
             if frameStore.frames.isEmpty {
-                Text("No frames yet.")
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("No frames yet.")
+                        .font(.headline)
+                    Text("Add the first frame to start logging metadata.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Button("Add First Frame") {
+                        showingNewFrame = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .padding(.vertical, 8)
             }
             ForEach(frameStore.frames) { frame in
                 VStack(alignment: .leading, spacing: 6) {
@@ -87,6 +98,7 @@ struct FrameListView: View {
                     export(format: .csv)
                 }
             }
+            .disabled(frameStore.frames.isEmpty)
         }
         .sheet(isPresented: $showingNewFrame) {
             NewFrameView(roll: roll)
@@ -105,6 +117,19 @@ struct FrameListView: View {
         } message: {
             Text(errorMessage ?? "")
         }
+        .alert("Export Ready", isPresented: Binding(
+            get: { successMessage != nil },
+            set: { _ in successMessage = nil }
+        )) {
+            Button("Share") {
+                if shareURL != nil {
+                    showingShare = true
+                }
+            }
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(successMessage ?? "")
+        }
         .onAppear {
             frameStore.loadFrames(for: roll.id)
         }
@@ -118,7 +143,11 @@ struct FrameListView: View {
     private func export(format: RollExportFormat) {
         do {
             shareURL = try exporter.exportRoll(rollId: roll.id, format: format)
-            showingShare = true
+            if let shareURL {
+                successMessage = "Saved \(shareURL.lastPathComponent) to Documents. Tap Share to open it."
+            } else {
+                successMessage = "Saved export to Documents. Tap Share to open it."
+            }
         } catch {
             errorMessage = "\(error)"
         }

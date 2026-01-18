@@ -31,6 +31,11 @@ Info.plist permissions are defined in `ios/FilmMetaLogger/Info.plist`.
 ## Desktop Validation
 See `desktop/README.md` for the exiftool script and Lightroom checks.
 
+## Export Conventions
+- Files are saved to the app Documents directory.
+- Naming: `roll-<roll_id>-YYYYMMDD-HHMMSS.<json|csv>`
+- If a name collides, a numeric suffix is appended.
+
 ## Structure
 - `ios/FilmMetaLogger`: SwiftUI MVP source
 - `desktop`: Metadata injection scripts + docs

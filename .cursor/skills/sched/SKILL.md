@@ -48,29 +48,29 @@ Export usable metadata.
 - [x] Write README and usage notes
 
 ## Day 8
-- Scaffold Xcode project
-- Add Info.plist permissions
-- Wire app target build
+- [x] Scaffold Xcode project
+- [x] Add Info.plist permissions
+- [x] Wire app target build
 
 ## Day 9
-- Frame detail inputs (shutter, aperture, focal length, exposure comp)
-- Keywords entry
-- Display frame details in list
+- [x] Frame detail inputs (shutter, aperture, focal length, exposure comp)
+- [x] Keywords entry
+- [x] Display frame details in list
 
 ## Day 10
-- Export polish (naming, overwrite handling)
-- In-app export status feedback
-- Document export path conventions
+- [x] Export polish (naming, overwrite handling)
+- [x] In-app export status feedback
+- [x] Document export path conventions
 
 ## Day 11
-- Desktop workflow refinements
-- Validate Lightroom mappings with real roll
-- Update docs with screenshots or samples
+- [x] Desktop workflow refinements
+- [x] Validate Lightroom mappings with real roll
+- [x] Update docs with screenshots or samples
 
 ## Day 12
-- UX pass (empty states, button labels)
-- Error handling audit
-- Final bug fixes
+- [x] UX pass (empty states, button labels)
+- [x] Error handling audit
+- [x] Final bug fixes
 
 ## Sprint Output
 - iOS app build

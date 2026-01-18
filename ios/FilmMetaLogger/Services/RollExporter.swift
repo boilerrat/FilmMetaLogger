@@ -19,6 +19,15 @@ final class RollExporter {
         return formatter
     }()
 
+    private static let filenameFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return formatter
+    }()
+
     private let database: SQLiteDatabase?
 
     init() {
@@ -78,7 +87,7 @@ final class RollExporter {
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         let data = try encoder.encode(exportRoll)
 
-        return try writeToDocuments(data: data, filename: "roll-\(roll.id).json")
+        return try writeToDocuments(data: data, baseName: "roll-\(roll.id)", extension: "json")
     }
 
     private func exportCSV(roll: Roll, frames: [Frame]) throws -> URL {
@@ -139,15 +148,20 @@ final class RollExporter {
             throw ExportError(message: "Failed to encode CSV.")
         }
 
-        return try writeToDocuments(data: data, filename: "roll-\(roll.id).csv")
+        return try writeToDocuments(data: data, baseName: "roll-\(roll.id)", extension: "csv")
     }
 
-    private func writeToDocuments(data: Data, filename: String) throws -> URL {
+    private func writeToDocuments(data: Data, baseName: String, extension: String) throws -> URL {
         let directory = try FileManager.default.url(
             for: .documentDirectory,
             in: .userDomainMask,
             appropriateFor: nil,
             create: true
+        )
+        let filename = uniqueFilename(
+            directory: directory,
+            baseName: baseName,
+            extension: `extension`
         )
         let url = directory.appendingPathComponent(filename)
         try data.write(to: url, options: .atomic)
@@ -157,6 +171,21 @@ final class RollExporter {
     private func csvEscaped(_ value: String) -> String {
         let escaped = value.replacingOccurrences(of: "\"", with: "\"\"")
         return "\"\(escaped)\""
+    }
+
+    private func uniqueFilename(directory: URL, baseName: String, extension: String) -> String {
+        let timestamp = Self.filenameFormatter.string(from: Date())
+        let baseFilename = "\(baseName)-\(timestamp)"
+        let fileManager = FileManager.default
+        var candidate = "\(baseFilename).\(extension)"
+        var counter = 1
+
+        while fileManager.fileExists(atPath: directory.appendingPathComponent(candidate).path) {
+            counter += 1
+            candidate = "\(baseFilename)-\(counter).\(extension)"
+        }
+
+        return candidate
     }
 }
 

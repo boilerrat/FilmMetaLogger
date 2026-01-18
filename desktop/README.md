@@ -23,6 +23,7 @@ Notes:
 - By default the script writes XMP sidecars next to the images.
 - Use `--inplace` to write directly into files instead.
 - The script expects a file per frame based on the pattern and extension.
+- Custom XMP tags are defined in `desktop/exiftool_config`.
 
 ## Verify with exiftool
 Inspect a sidecar:
@@ -32,8 +33,24 @@ exiftool -G1 -a -s /path/to/scans/frame_01.xmp
 ```
 
 Expected tags:
-- IPTC: `Caption-Abstract`, `Keywords`, `Location`
-- XMP: `FilmShutterSpeed`, `FilmAperture`, `FilmISO`, `FilmStock`, `Camera`, `Lens`
+- XMP-dc: `Description` (caption) and `Subject` (keywords)
+- XMP-iptcCore: `Location`
+- XMP-filmmeta: `FilmShutterSpeed`, `FilmAperture`, `FilmISO`, `FilmStock`, `Camera`, `Lens`
+
+Sample output:
+
+```bash
+exiftool -G1 -a -s /path/to/scans/frame_01.xmp
+```
+
+```
+[XMP-dc]        Description                     : Test frame 1
+[XMP-dc]        Subject                         : test, scan
+[XMP-filmmeta]  FilmShutterSpeed                : 1/125
+[XMP-filmmeta]  FilmAperture                    : f/2.8
+[XMP-filmmeta]  FilmISO                         : 400
+[XMP-filmmeta]  FilmStock                       : Kodak Portra 400
+```
 
 ## Verify in Lightroom Classic
 1. Import the images with their sidecars in the same folder.
@@ -41,7 +58,9 @@ Expected tags:
    - Caption matches `voice_note_parsed` or `voice_note_raw`
    - Keywords are present
    - Location shows `latitude,longitude` string
-   - Custom XMP fields appear in the metadata list
+   - Custom XMP fields appear under the filmmeta namespace
+
+Validation notes live in `desktop/validation_log.md`.
 
 ## Known Limitations
 - No automatic scan matching: filenames must map to `frame_number`.

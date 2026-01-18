@@ -17,8 +17,18 @@ struct RollListView: View {
         NavigationStack {
             List {
                 if rollStore.rolls.isEmpty {
-                    Text("No rolls yet.")
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("No rolls yet.")
+                            .font(.headline)
+                        Text("Start a roll to begin logging frames.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Button("Create Roll") {
+                            showingNewRoll = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .padding(.vertical, 8)
                 }
                 ForEach(rollStore.rolls) { roll in
                     NavigationLink {

@@ -19,6 +19,7 @@ struct NewFrameView: View {
     @State private var keywordsText = ""
     @State private var transcriptRaw = ""
     @State private var isTranscribing = false
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -102,6 +103,29 @@ struct NewFrameView: View {
                 locationProvider.requestLocation()
                 audioRecorder.requestPermission { _ in }
                 speechTranscriber.requestAuthorization { _ in }
+            }
+            .onChange(of: locationProvider.lastError) { _, newValue in
+                if let newValue {
+                    errorMessage = newValue.localizedDescription
+                }
+            }
+            .onChange(of: audioRecorder.lastError) { _, newValue in
+                if let newValue {
+                    errorMessage = newValue.localizedDescription
+                }
+            }
+            .onChange(of: speechTranscriber.lastError) { _, newValue in
+                if let newValue {
+                    errorMessage = newValue.localizedDescription
+                }
+            }
+            .alert("Frame Error", isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { _ in errorMessage = nil }
+            )) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage ?? "")
             }
         }
     }
